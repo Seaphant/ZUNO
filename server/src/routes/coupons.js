@@ -2,8 +2,34 @@ import express from 'express';
 import { body, query, param, validationResult } from 'express-validator';
 import Coupon from '../models/Coupon.js';
 import CouponCategory from '../models/CouponCategory.js';
+import { getProductImage } from '../services/productImageDatabase.js';
 
 const router = express.Router();
+
+const formatCouponResponse = (coupon) => {
+  if (!coupon) {
+    return coupon;
+  }
+
+  const plainCoupon = typeof coupon.toObject === 'function'
+    ? coupon.toObject()
+    : { ...coupon };
+
+  const categoryName = typeof plainCoupon.category === 'string'
+    ? plainCoupon.category
+    : plainCoupon.category?.name || 'Other';
+
+  const resolvedImageUrl = getProductImage(
+    plainCoupon.brand,
+    plainCoupon.title,
+    categoryName
+  );
+
+  return {
+    ...plainCoupon,
+    imageUrl: resolvedImageUrl
+  };
+};
 
 // Validation middleware
 const validate = (req, res, next) => {
@@ -107,9 +133,11 @@ router.get('/', [
     // Get total count for pagination
     const total = await Coupon.countDocuments(queryObj);
 
+    const couponsWithImages = coupons.map(formatCouponResponse);
+
     res.json({
       success: true,
-      data: coupons,
+      data: couponsWithImages,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -138,7 +166,7 @@ router.get('/:id', [
       return res.status(404).json({ success: false, error: 'Coupon not found' });
     }
 
-    res.json({ success: true, data: coupon });
+    res.json({ success: true, data: formatCouponResponse(coupon) });
   } catch (error) {
     console.error('Error fetching coupon:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -196,7 +224,7 @@ router.post('/', [
     const populatedCoupon = await Coupon.findById(coupon._id)
       .populate('category', 'name description icon color');
 
-    res.status(201).json({ success: true, data: populatedCoupon });
+    res.status(201).json({ success: true, data: formatCouponResponse(populatedCoupon) });
   } catch (error) {
     console.error('Error creating coupon:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -231,7 +259,7 @@ router.put('/:id', [
       return res.status(404).json({ success: false, error: 'Coupon not found' });
     }
 
-    res.json({ success: true, data: coupon });
+    res.json({ success: true, data: formatCouponResponse(coupon) });
   } catch (error) {
     console.error('Error updating coupon:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -300,7 +328,7 @@ router.post('/:id/images', [
 
     res.json({ 
       success: true, 
-      data: populatedCoupon,
+      data: formatCouponResponse(populatedCoupon),
       message: 'Image updated successfully'
     });
   } catch (error) {
