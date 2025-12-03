@@ -1,0 +1,182 @@
+{
+  "brands": {
+    "Lays": {
+      "default": "https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=800&q=80"
+    },
+    "Nature Valley": {
+      "default": "https://images.unsplash.com/photo-1606312619070-d48f4eb0e15e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Cheerios": {
+      "default": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80"
+    },
+    "Horizon": {
+      "default": "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=800&q=80"
+    },
+    "Starbucks": {
+      "default": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80"
+    },
+    "Tropicana": {
+      "default": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80"
+    },
+    "Coca-Cola": {
+      "default": "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=800&q=80"
+    },
+    "Gala": {
+      "default": "https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?auto=format&fit=crop&w=800&q=80"
+    },
+    "Driscoll's": {
+      "default": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=800&q=80"
+    },
+    "Dawn": {
+      "default": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=800&q=80"
+    },
+    "Head & Shoulders": {
+      "default": "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80"
+    },
+    "Wild Caught": {
+      "default": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80"
+    },
+    "Happy Egg": {
+      "default": "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=800&q=80"
+    },
+    "Boar's Head": {
+      "default": "https://images.unsplash.com/photo-1528607929212-2636ec44253e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Royal": {
+      "default": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80"
+    },
+    "Daily Catch": {
+      "default": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80"
+    },
+    "Fresh": {
+      "default": "https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=800&q=80",
+      "matchers": [
+        {
+          "keywords": ["rotisserie", "chicken"],
+          "url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=80"
+        },
+        {
+          "keywords": ["chicken"],
+          "url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=80"
+        },
+        {
+          "keywords": ["beef", "ground"],
+          "url": "https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=800&q=80"
+        },
+        {
+          "keywords": ["banana", "bananas"],
+          "url": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80"
+        },
+        {
+          "keywords": ["spinach", "greens", "vegetable"],
+          "url": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80"
+        }
+      ]
+    },
+    "House Brand": {
+      "default": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
+    },
+    "House": {
+      "default": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Select": {
+      "default": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Generic": {
+      "default": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Fresh Baked": {
+      "default": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80"
+    },
+    "Deli": {
+      "default": "https://images.unsplash.com/photo-1528607929212-2636ec44253e?auto=format&fit=crop&w=800&q=80"
+    },
+    "Tide": {
+      "default": "https://images.unsplash.com/photo-1625772452859-1c18360b8a0e?auto=format&fit=crop&w=800&q=80"
+    },
+    "DiGiorno": {
+      "default": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80"
+    },
+    "Charmin": {
+      "default": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80"
+    },
+    "Wonder": {
+      "default": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80"
+    },
+    "Land O'Lakes": {
+      "default": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80"
+    },
+    "Greek Gods": {
+      "default": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80"
+    }
+  },
+  "keywordFallbacks": [
+    {
+      "keywords": ["salmon", "seafood", "fish"],
+      "url": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["beef", "ground", "steak"],
+      "url": "https://images.unsplash.com/photo-1603048297172-c92544798d5e?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["chicken", "rotisserie"],
+      "url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["cereal", "breakfast"],
+      "url": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["granola", "bar"],
+      "url": "https://images.unsplash.com/photo-1606312619070-d48f4eb0e15e?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["juice", "orange"],
+      "url": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["coffee", "latte", "espresso"],
+      "url": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["soda", "cola"],
+      "url": "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["wine"],
+      "url": "https://images.unsplash.com/photo-1506354666786-959d6d497f1a?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["egg"],
+      "url": "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["rice", "jasmine"],
+      "url": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["soap", "clean"],
+      "url": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["shampoo"],
+      "url": "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["berries", "berry"],
+      "url": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "keywords": ["apple"],
+      "url": "https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?auto=format&fit=crop&w=800&q=80"
+    }
+  ],
+  "categoryFallbacks": {
+    "Snacks": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=800&q=80",
+    "Beverages": "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=800&q=80",
+    "Household": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+    "Produce": "https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?auto=format&fit=crop&w=800&q=80",
+    "Other": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
+  }
+}
