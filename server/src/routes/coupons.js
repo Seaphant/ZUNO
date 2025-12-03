@@ -264,5 +264,113 @@ router.delete('/:id', [
   }
 });
 
+/**
+ * POST /api/coupons/:id/images
+ * Update image URL for a specific coupon
+ */
+router.post('/:id/images', [
+  param('id').isMongoId()
+], validate, async (req, res) => {
+  try {
+    const coupon = await Coupon.findById(req.params.id);
+    
+    if (!coupon) {
+      return res.status(404).json({ success: false, error: 'Coupon not found' });
+    }
+
+    // Import NEW product image service
+    const { fetchProductImage } = await import('../services/productImageService.js');
+    
+    // Fetch image for this coupon
+    const category = await CouponCategory.findById(coupon.category);
+    const categoryName = category ? category.name : 'Other';
+    
+    const imageUrl = await fetchProductImage(
+      coupon.brand,
+      coupon.title,
+      categoryName
+    );
+
+    // Update coupon with new image URL
+    coupon.imageUrl = imageUrl;
+    await coupon.save();
+
+    const populatedCoupon = await Coupon.findById(coupon._id)
+      .populate('category', 'name description icon color');
+
+    res.json({ 
+      success: true, 
+      data: populatedCoupon,
+      message: 'Image updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating coupon image:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+/**
+ * POST /api/coupons/images/batch-update
+ * Batch update images for all coupons without images
+ */
+router.post('/images/batch-update', async (req, res) => {
+  try {
+    const { fetchProductImage } = await import('../services/productImageService.js');
+    
+    // Find all coupons without images
+    const coupons = await Coupon.find({
+      $or: [
+        { imageUrl: { $exists: false } },
+        { imageUrl: null },
+        { imageUrl: '' }
+      ],
+      isActive: true
+    }).populate('category', 'name');
+
+    console.log(`Found ${coupons.length} coupons without images`);
+
+    let updated = 0;
+    let failed = 0;
+
+    // Update images with rate limiting
+    for (let i = 0; i < coupons.length; i++) {
+      const coupon = coupons[i];
+      try {
+        const categoryName = coupon.category?.name || 'Other';
+        const imageUrl = await fetchProductImage(
+          coupon.brand,
+          coupon.title,
+          categoryName
+        );
+
+        coupon.imageUrl = imageUrl;
+        await coupon.save();
+        updated++;
+
+        // Rate limiting: wait 100ms between requests
+        if (i < coupons.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.error(`Error updating image for coupon ${coupon._id}:`, error.message);
+        failed++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Batch update complete: ${updated} updated, ${failed} failed`,
+      stats: {
+        total: coupons.length,
+        updated,
+        failed
+      }
+    });
+  } catch (error) {
+    console.error('Error in batch image update:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 export default router;
 

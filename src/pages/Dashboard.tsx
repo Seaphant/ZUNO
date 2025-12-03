@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { fetchCoupons, apiCouponToCoupon, fetchUserCoupons } from "../lib/api";
+import { useEffect, useState, useCallback } from "react";
+import { apiCouponToCoupon, fetchUserCoupons } from "../lib/api";
 import { COUPONS } from "../lib/mock";
 import CouponCard from "../components/CouponCard";
 import { savedCouponsStorage } from "../lib/utils";
 import type { Coupon } from "../lib/types";
 
 export default function Dashboard() {
-  const [savedIds, setSavedIds] = useState<string[]>([]);
   const [savedCoupons, setSavedCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -14,7 +13,6 @@ export default function Dashboard() {
     const loadSavedCoupons = async () => {
       setLoading(true);
       const savedIdsList = savedCouponsStorage.get();
-      setSavedIds(savedIdsList);
 
       if (savedIdsList.length === 0) {
         setSavedCoupons([]);
@@ -48,8 +46,6 @@ export default function Dashboard() {
 
   const remove = useCallback((id: string) => {
     savedCouponsStorage.remove(id);
-    const updatedIds = savedCouponsStorage.get();
-    setSavedIds(updatedIds);
     
     // Update saved coupons list
     const updatedCoupons = savedCoupons.filter(c => c.id !== id);
