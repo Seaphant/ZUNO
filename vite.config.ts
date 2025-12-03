@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const DEV_API_TARGET = process.env.VITE_DEV_API_URL || 'http://localhost:3001';
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -15,6 +17,13 @@ export default defineConfig({
       '.trycloudflare.com', // Allow all Cloudflare tunnel hosts
       '.loca.lt', // Allow localtunnel hosts too
     ],
+    proxy: {
+      '/api': {
+        target: DEV_API_TARGET,
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
     target: 'esnext',

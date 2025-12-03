@@ -1,4 +1,4 @@
-import { useState, memo, useCallback } from "react";
+import { useState, memo, useCallback, useEffect, useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import type { Coupon } from "../lib/types";
 import { getProductImageUrl } from "../lib/images";
@@ -11,7 +11,18 @@ interface CouponCardProps {
 function CouponCard({ c, onSave }: CouponCardProps) {
   const [showQR, setShowQR] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const productImageUrl = getProductImageUrl(c);
+  const fallbackImageUrl = useMemo(
+    () => getProductImageUrl({ ...c, imageUrl: undefined }),
+    [c]
+  );
+  const [imageSrc, setImageSrc] = useState<string>(
+    c.imageUrl?.trim() || fallbackImageUrl
+  );
+
+  useEffect(() => {
+    setImageError(false);
+    setImageSrc(c.imageUrl?.trim() || fallbackImageUrl);
+  }, [c, fallbackImageUrl]);
   
   const toggleQR = useCallback(() => {
     setShowQR(prev => !prev);
@@ -20,6 +31,14 @@ function CouponCard({ c, onSave }: CouponCardProps) {
   const handleSave = useCallback(() => {
     onSave?.(c.id);
   }, [onSave, c.id]);
+
+  const handleImageError = useCallback(() => {
+    if (imageSrc !== fallbackImageUrl) {
+      setImageSrc(fallbackImageUrl);
+      return;
+    }
+    setImageError(true);
+  }, [imageSrc, fallbackImageUrl]);
   
   const getValueColor = () => {
     if (c.type === "Amount" && c.value >= 5) return "from-emerald-400 to-teal-400";
@@ -37,10 +56,10 @@ function CouponCard({ c, onSave }: CouponCardProps) {
         <div className="relative w-full h-48 mb-4 rounded-xl overflow-hidden bg-white/5 border border-white/10">
           {!imageError ? (
             <img
-              src={productImageUrl}
+              src={imageSrc}
               alt={c.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              onError={() => setImageError(true)}
+              onError={handleImageError}
               loading="lazy"
             />
           ) : (

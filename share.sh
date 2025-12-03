@@ -1,68 +1,98 @@
 #!/bin/bash
-cd "$(dirname "$0")"
+set -euo pipefail
 
-# Kill old processes
-echo "🧹 Cleaning up..."
-pkill -9 cloudflared 2>/dev/null
-pkill -9 vite 2>/dev/null
-pkill -9 node 2>/dev/null
-lsof -ti:5173,5174,5175 2>/dev/null | xargs kill -9 2>/dev/null
-sleep 2
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT_DIR"
 
-echo "🚀 Starting dev server on port 5173..."
-PORT=5173 npm run dev > /tmp/vite.log 2>&1 &
-VITE_PID=$!
+BACKEND_PORT=${BACKEND_PORT:-3001}
+FRONTEND_PORT=${FRONTEND_PORT:-5173}
 
-echo "⏳ Waiting for server to start..."
-for i in {1..10}; do
-  if lsof -i :5173 > /dev/null 2>&1; then
-    echo "✅ Server is ready on port 5173!"
+cleanup() {
+  echo ""
+  echo "🛑 Shutting down..."
+  if [[ -n "${TAIL_PID:-}" ]]; then kill "$TAIL_PID" 2>/dev/null || true; fi
+  if [[ -n "${TUNNEL_PID:-}" ]]; then kill "$TUNNEL_PID" 2>/dev/null || true; fi
+  if [[ -n "${VITE_PID:-}" ]]; then kill "$VITE_PID" 2>/dev/null || true; fi
+  if [[ -n "${BACKEND_PID:-}" ]]; then kill "$BACKEND_PID" 2>/dev/null || true; fi
+}
+trap cleanup EXIT
+
+echo "🧹 Cleaning up old processes..."
+pkill -f "cloudflared" 2>/dev/null || true
+pkill -f "vite" 2>/dev/null || true
+pkill -f "src/server.js" 2>/dev/null || true
+sleep 1
+
+if [ ! -d "server/node_modules" ]; then
+  echo "📦 Installing backend dependencies..."
+  (cd server && npm install)
+fi
+
+if [ ! -d "node_modules" ]; then
+  echo "📦 Installing frontend dependencies..."
+  npm install
+fi
+
+echo "🚀 Starting backend on port ${BACKEND_PORT}..."
+(cd server && PORT=$BACKEND_PORT npm run dev > /tmp/zuno-backend.log 2>&1 &)
+BACKEND_PID=$!
+
+for i in {1..20}; do
+  if lsof -i :$BACKEND_PORT >/dev/null 2>&1; then
+    echo "   ✅ Backend ready (logs: /tmp/zuno-backend.log)"
     break
   fi
   sleep 1
 done
 
-# Check if server started
-if ! lsof -i :5173 > /dev/null 2>&1; then
-  echo "❌ Server failed to start. Check /tmp/vite.log"
-  kill $VITE_PID 2>/dev/null
+if ! lsof -i :$BACKEND_PORT >/dev/null 2>&1; then
+  echo "❌ Backend failed to start. Check /tmp/zuno-backend.log"
+  exit 1
+fi
+
+echo "⚙️  Starting frontend dev server on port ${FRONTEND_PORT}..."
+(PORT=$FRONTEND_PORT VITE_API_URL=/api npm run dev > /tmp/vite.log 2>&1 &)
+VITE_PID=$!
+
+for i in {1..15}; do
+  if lsof -i :$FRONTEND_PORT >/dev/null 2>&1; then
+    echo "   ✅ Frontend ready (logs: /tmp/vite.log)"
+    break
+  fi
+  sleep 1
+done
+
+if ! lsof -i :$FRONTEND_PORT >/dev/null 2>&1; then
+  echo "❌ Frontend failed to start. Check /tmp/vite.log"
   exit 1
 fi
 
 echo ""
 echo "🌐 Creating public tunnel..."
-echo ""
-
-# Start tunnel in background and capture URL
-cloudflared tunnel --url http://localhost:5173 > /tmp/tunnel.log 2>&1 &
+cloudflared tunnel --url http://localhost:$FRONTEND_PORT > /tmp/tunnel.log 2>&1 &
 TUNNEL_PID=$!
 
-# Wait for URL
-sleep 8
-URL=$(grep -oE "https://[a-z0-9-]+\.trycloudflare\.com" /tmp/tunnel.log 2>/dev/null | head -1)
+sleep 6
+URL=$(grep -oE "https://[a-z0-9-]+\.trycloudflare\.com" /tmp/tunnel.log 2>/dev/null | head -1 || true)
 
-if [ ! -z "$URL" ]; then
-  echo ""
-  echo "════════════════════════════════════════════════════════════"
-  echo "  ✅ YOUR PUBLIC URL (share with everyone):"
-  echo "  $URL"
-  echo "════════════════════════════════════════════════════════════"
-  echo ""
-  echo "Server and tunnel are running in the background."
-  echo "Press Ctrl+C to stop, or run: pkill -9 cloudflared vite"
-  echo ""
-  echo "Tunnel output: tail -f /tmp/tunnel.log"
-  echo ""
-  
-  # Keep script running
-  wait $TUNNEL_PID
-else
-  echo "❌ Could not get tunnel URL. Check /tmp/tunnel.log"
-  kill $VITE_PID $TUNNEL_PID 2>/dev/null
+if [[ -z "${URL}" ]]; then
+  echo "❌ Could not retrieve tunnel URL. Check /tmp/tunnel.log"
   exit 1
 fi
 
-# Cleanup on exit
-trap "kill $VITE_PID $TUNNEL_PID 2>/dev/null; exit" INT TERM
-wait
+echo ""
+echo "════════════════════════════════════════════════════════════"
+echo "  ✅ YOUR PUBLIC URL (share with anyone):"
+echo "  ${URL}"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+echo "Frontend logs  : tail -f /tmp/vite.log"
+echo "Backend logs   : tail -f /tmp/zuno-backend.log"
+echo "Tunnel logs    : tail -f /tmp/tunnel.log"
+echo "Press Ctrl+C to stop everything."
+echo ""
 
+tail -f /tmp/tunnel.log &
+TAIL_PID=$!
+
+wait $TUNNEL_PID

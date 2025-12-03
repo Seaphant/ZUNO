@@ -2,7 +2,16 @@
  * API client for Zuno backend
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const DEFAULT_API_BASE = '/api';
+const envApiBase = import.meta.env.VITE_API_URL?.trim();
+
+function normalizeBaseUrl(url: string): string {
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+}
+
+const API_BASE_URL = normalizeBaseUrl(
+  envApiBase && envApiBase.length > 0 ? envApiBase : DEFAULT_API_BASE
+);
 
 export interface ApiResponse<T> {
   success: boolean;
