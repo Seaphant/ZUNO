@@ -8,6 +8,7 @@
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "seed": "node src/scripts/seed.js",
+    "update-images": "node src/scripts/updateImages.js",
     "build": "echo 'No build step required'"
   },
   "dependencies": {
